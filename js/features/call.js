@@ -709,6 +709,7 @@ html:not([data-theme="dark"])[data-color-theme="black-white"] .message-sent{
 
     function showIncomingCall() {
         if (!S.enabled || S.active) return;
+        if (typeof window._cinemaShouldBlockInterruptions === 'function' && window._cinemaShouldBlockInterruptions()) return; // 观影中/快到观影时间不弹通话邀请
         const ov = document.getElementById('call-incoming-overlay');
         if (!ov) return;
         fillAv('call-inc-avatar'); fillNm('call-inc-name');
@@ -756,7 +757,7 @@ html:not([data-theme="dark"])[data-color-theme="black-white"] .message-sent{
                 try { if (typeof window.stopCurrentSound === 'function') window.stopCurrentSound(); } catch(e) {}
                 const myName = (typeof settings !== 'undefined' && settings.myName) || '我';
                 sendCallEvent('fa-phone-slash', `${myName}未接听 ${getName()} 的来电`, null);
-            }, 22000);
+            }, 60000);
         }
     }
 
@@ -958,7 +959,7 @@ html:not([data-theme="dark"])[data-color-theme="black-white"] .message-sent{
         initDrag(); initPillDrag(); initResize();
     }
 
-    window.callFeature = { startCall, endCall, showIncomingCall, restoreWindow, minimizeWindow };
+    window.callFeature = { startCall, endCall, showIncomingCall, restoreWindow, minimizeWindow, isActive: () => S.active };
 
     function init() {
         injectCSS();
